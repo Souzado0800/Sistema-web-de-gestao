@@ -4,17 +4,23 @@
 const db = require('../db');
 
 async function findAll() {
-  const sql = `
-    SELECT 
-      c.*,
-      COUNT(p.id) as product_count
-    FROM categories c
-    LEFT JOIN products p ON c.id = p.category_id AND p.status = 'active'
-    GROUP BY c.id
-    ORDER BY c.name ASC
-  `;
-  const res = await db.query(sql);
-  return res.rows;
+  const catRes = await db.query(`SELECT * FROM categories ORDER BY name ASC`);
+  const countsRes = await db.query(`
+    SELECT category_id, COUNT(*) as count 
+    FROM products 
+    WHERE status = $1 AND category_id IS NOT NULL 
+    GROUP BY category_id
+  `, ['active']);
+
+  const countMap = {};
+  countsRes.rows.forEach(r => {
+    countMap[r.category_id] = parseInt(r.count, 10);
+  });
+
+  return catRes.rows.map(c => ({
+    ...c,
+    product_count: countMap[c.id] || 0
+  }));
 }
 
 async function findById(id) {

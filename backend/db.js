@@ -52,6 +52,20 @@ function initPool() {
       implementation: toCharImpl
     });
 
+    memDb.public.registerFunction({
+      name: 'abs',
+      args: [DataType.float],
+      returns: DataType.float,
+      implementation: (x) => Math.abs(x)
+    });
+
+    memDb.public.registerFunction({
+      name: 'abs',
+      args: [DataType.integer],
+      returns: DataType.integer,
+      implementation: (x) => Math.abs(x)
+    });
+
     // Carrega migrations e seeds automaticamente no banco in-memory
     const migrationsDir = path.join(__dirname, '../database/migrations');
     const seedFile = path.join(__dirname, '../database/seeds/initial_seed.sql');

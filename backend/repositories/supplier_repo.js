@@ -9,28 +9,38 @@ async function findAll({ search = '', activeOnly = false } = {}) {
   let idx = 1;
 
   if (activeOnly) {
-    conditions.push(`s.active = true`);
+    conditions.push(`active = true`);
   }
   if (search && search.trim().length > 0) {
-    conditions.push(`(s.name ILIKE $${idx} OR s.corporate_name ILIKE $${idx} OR s.cnpj ILIKE $${idx} OR s.contact_person ILIKE $${idx})`);
+    conditions.push(`(name ILIKE $${idx} OR corporate_name ILIKE $${idx} OR cnpj ILIKE $${idx} OR contact_person ILIKE $${idx})`);
     params.push(`%${search.trim()}%`);
     idx++;
   }
 
   const whereClause = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
-
   const sql = `
-    SELECT 
-      s.*,
-      COUNT(p.id) as supplied_products_count
-    FROM suppliers s
-    LEFT JOIN products p ON s.id = p.primary_supplier_id AND p.status = 'active'
+    SELECT * FROM suppliers
     ${whereClause}
-    GROUP BY s.id
-    ORDER BY s.name ASC
+    ORDER BY name ASC
   `;
   const res = await db.query(sql, params);
-  return res.rows;
+
+  const countsRes = await db.query(`
+    SELECT primary_supplier_id, COUNT(*) as count
+    FROM products
+    WHERE status = $1 AND primary_supplier_id IS NOT NULL
+    GROUP BY primary_supplier_id
+  `, ['active']);
+
+  const countMap = {};
+  countsRes.rows.forEach(r => {
+    countMap[r.primary_supplier_id] = parseInt(r.count, 10);
+  });
+
+  return res.rows.map(s => ({
+    ...s,
+    supplied_products_count: countMap[s.id] || 0
+  }));
 }
 
 async function findById(id) {

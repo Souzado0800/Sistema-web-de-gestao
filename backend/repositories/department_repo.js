@@ -5,18 +5,24 @@ const db = require('../db');
 
 async function findAll({ activeOnly = false } = {}) {
   const where = activeOnly ? 'WHERE active = true' : '';
-  const sql = `
-    SELECT 
-      d.*,
-      COUNT(m.id) as movement_count
-    FROM departments d
-    LEFT JOIN stock_movements m ON d.id = m.department_id
-    ${where}
-    GROUP BY d.id
-    ORDER BY d.name ASC
-  `;
-  const res = await db.query(sql);
-  return res.rows;
+  const res = await db.query(`SELECT * FROM departments ${where} ORDER BY name ASC`);
+
+  const countsRes = await db.query(`
+    SELECT department_id, COUNT(*) as count
+    FROM stock_movements
+    WHERE department_id IS NOT NULL
+    GROUP BY department_id
+  `);
+
+  const countMap = {};
+  countsRes.rows.forEach(r => {
+    countMap[r.department_id] = parseInt(r.count, 10);
+  });
+
+  return res.rows.map(d => ({
+    ...d,
+    movement_count: countMap[d.id] || 0
+  }));
 }
 
 async function findById(id) {

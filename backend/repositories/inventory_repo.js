@@ -11,20 +11,43 @@ async function findAllSessions({ limit = 50, offset = 0 } = {}) {
     SELECT 
       s.*,
       c.name as category_name,
-      u.full_name as created_by_name,
-      COUNT(i.id) as total_items_counted,
-      COALESCE(SUM(ABS(i.difference)), 0) as total_divergence
+      u.full_name as created_by_name
     FROM inventory_sessions s
     LEFT JOIN categories c ON s.category_id = c.id
     LEFT JOIN users u ON s.created_by = u.id
-    LEFT JOIN inventory_items i ON s.id = i.session_id
-    GROUP BY s.id, c.name, u.full_name
     ORDER BY s.created_at DESC
     LIMIT $1 OFFSET $2
   `;
   const res = await db.query(sql, [limit, offset]);
+
+  if (res.rows.length === 0) {
+    return { data: [], total, limit, offset };
+  }
+
+  const itemsAgg = await db.query(`
+    SELECT 
+      session_id, 
+      COUNT(id) as total_items_counted, 
+      COALESCE(SUM(ABS(difference)), 0) as total_divergence 
+    FROM inventory_items 
+    GROUP BY session_id
+  `);
+  const aggMap = {};
+  itemsAgg.rows.forEach(r => {
+    aggMap[r.session_id] = {
+      total_items_counted: parseInt(r.total_items_counted, 10) || 0,
+      total_divergence: parseFloat(r.total_divergence) || 0
+    };
+  });
+
+  const data = res.rows.map(s => ({
+    ...s,
+    total_items_counted: aggMap[s.id] ? aggMap[s.id].total_items_counted : 0,
+    total_divergence: aggMap[s.id] ? aggMap[s.id].total_divergence : 0
+  }));
+
   return {
-    data: res.rows,
+    data,
     total,
     limit,
     offset

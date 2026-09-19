@@ -58,22 +58,47 @@ async function findAllOrders({ status = null, limit = 50, offset = 0 } = {}) {
     SELECT 
       po.*,
       s.name as supplier_name,
-      u.full_name as created_by_name,
-      COUNT(poi.id) as total_items,
-      SUM(poi.quantity_ordered) as total_units_ordered,
-      SUM(poi.quantity_received) as total_units_received
+      u.full_name as created_by_name
     FROM purchase_orders po
     LEFT JOIN suppliers s ON po.supplier_id = s.id
     LEFT JOIN users u ON po.created_by = u.id
-    LEFT JOIN purchase_order_items poi ON po.id = poi.order_id
     ${whereClause}
-    GROUP BY po.id, s.name, u.full_name
     ORDER BY po.created_at DESC
     LIMIT $${idx++} OFFSET $${idx++}
   `;
   const res = await db.query(sql, dataParams);
+
+  if (res.rows.length === 0) {
+    return { data: [], total, limit, offset };
+  }
+
+  const itemsAgg = await db.query(`
+    SELECT 
+      order_id, 
+      COUNT(id) as total_items, 
+      COALESCE(SUM(quantity_ordered), 0) as total_units_ordered, 
+      COALESCE(SUM(quantity_received), 0) as total_units_received 
+    FROM purchase_order_items 
+    GROUP BY order_id
+  `);
+  const aggMap = {};
+  itemsAgg.rows.forEach(r => {
+    aggMap[r.order_id] = {
+      total_items: parseInt(r.total_items, 10) || 0,
+      total_units_ordered: parseFloat(r.total_units_ordered) || 0,
+      total_units_received: parseFloat(r.total_units_received) || 0
+    };
+  });
+
+  const data = res.rows.map(po => ({
+    ...po,
+    total_items: aggMap[po.id] ? aggMap[po.id].total_items : 0,
+    total_units_ordered: aggMap[po.id] ? aggMap[po.id].total_units_ordered : 0,
+    total_units_received: aggMap[po.id] ? aggMap[po.id].total_units_received : 0
+  }));
+
   return {
-    data: res.rows,
+    data,
     total,
     limit,
     offset

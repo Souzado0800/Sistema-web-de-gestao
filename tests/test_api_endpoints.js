@@ -88,7 +88,23 @@ async function runApiIntegrationTests() {
   assert.ok(csvRes.data.includes('PAP-A4-75G'));
   console.log(' ✔ [API] GET /api/reports/stock?format=csv gerou arquivo CSV exportável');
 
-  // 7. Auditoria
+  // 7. Fornecedores, Categorias e Departamentos (utilizados no modal de edição)
+  const suppRes = await callApi('GET', '/suppliers', null, authHeaders, { active: 'true' });
+  assert.strictEqual(suppRes.status, 200, 'GET /suppliers deve retornar 200 OK');
+  assert.ok(Array.isArray(suppRes.data.suppliers), 'Deve retornar array de fornecedores');
+  console.log(` ✔ [API] GET /api/suppliers retornou ${suppRes.data.suppliers.length} fornecedores ativos`);
+
+  const catRes = await callApi('GET', '/categories', null, authHeaders);
+  assert.strictEqual(catRes.status, 200, 'GET /categories deve retornar 200 OK');
+  assert.ok(Array.isArray(catRes.data.categories), 'Deve retornar array de categorias');
+  console.log(` ✔ [API] GET /api/categories retornou ${catRes.data.categories.length} categorias`);
+
+  const deptRes = await callApi('GET', '/departments', null, authHeaders);
+  assert.strictEqual(deptRes.status, 200, 'GET /departments deve retornar 200 OK');
+  assert.ok(Array.isArray(deptRes.data.departments), 'Deve retornar array de departamentos');
+  console.log(` ✔ [API] GET /api/departments retornou ${deptRes.data.departments.length} departamentos`);
+
+  // 8. Auditoria
   const auditRes = await callApi('GET', '/audit', null, authHeaders);
   assert.strictEqual(auditRes.status, 200);
   assert.ok(auditRes.data.data.length > 0);
