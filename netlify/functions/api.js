@@ -701,6 +701,29 @@ exports.handler = async function (event, context) {
       return jsonResponse(200, { message: 'Configurações atualizadas com sucesso.', settings: updated });
     }
 
+    if (reqPath === '/settings/clean-database' && method === 'POST') {
+      requireAdmin(authUser);
+      await db.query('DELETE FROM stock_movements');
+      await db.query('DELETE FROM inventory_items');
+      await db.query('DELETE FROM inventory_sessions');
+      await db.query('DELETE FROM purchase_order_items');
+      await db.query('DELETE FROM purchase_orders');
+      await db.query('DELETE FROM products');
+      await db.query('DELETE FROM suppliers');
+      await db.query('DELETE FROM departments');
+      await db.query('DELETE FROM categories');
+      await auditRepo.logAction({
+        user_id: authUser.id,
+        username: authUser.username,
+        action: 'BANCO_DADOS_LIMPO',
+        entity_type: 'SYSTEM',
+        entity_id: null,
+        details: { message: 'Todos os registros operacionais foram limpos pelo administrador' },
+        ip_address: clientIp
+      });
+      return jsonResponse(200, { message: 'Todos os bancos e tabelas foram limpos com sucesso!' });
+    }
+
     // Exportação completa de backup (JSON)
     if (reqPath === '/backup/export' && method === 'GET') {
       requireAdmin(authUser);

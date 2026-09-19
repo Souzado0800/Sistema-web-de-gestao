@@ -2,7 +2,48 @@
    DESIGN SYSTEM CORPORATIVO — SISTEMA DE GESTÃO DE ESTOQUE EMPRESARIAL
    ============================================================================== */
 
-:root {
+:root, [data-theme="dark"] {
+  --primary: #3b82f6;
+  --primary-hover: #2563eb;
+  --primary-light: rgba(59, 130, 246, 0.15);
+  --success: #10b981;
+  --success-hover: #059669;
+  --success-light: rgba(16, 185, 129, 0.15);
+  --warning: #f59e0b;
+  --warning-hover: #d97706;
+  --warning-light: rgba(245, 158, 11, 0.15);
+  --danger: #ef4444;
+  --danger-hover: #dc2626;
+  --danger-light: rgba(239, 68, 68, 0.15);
+  --info: #38bdf8;
+  
+  --bg-app: #090d16;
+  --bg-surface: #111827;
+  --bg-surface-alt: #1a2234;
+  --bg-surface-elevated: #1f293d;
+  --bg-sidebar: #070a12;
+  --bg-sidebar-hover: #131b2e;
+  --bg-sidebar-active: #2563eb;
+  
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+  --text-light: #64748b;
+  --text-white: #ffffff;
+  
+  --border-color: #1e293b;
+  --border-subtle: #334155;
+  --border-focus: #3b82f6;
+  
+  --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.35);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.45), 0 2px 4px -1px rgba(0, 0, 0, 0.25);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.55), 0 4px 6px -2px rgba(0, 0, 0, 0.35);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.65), 0 10px 10px -5px rgba(0, 0, 0, 0.45);
+  
+  --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --transition: all 0.2s ease-in-out;
+}
+
+[data-theme="light"] {
   --primary: #2563eb;
   --primary-hover: #1d4ed8;
   --primary-light: #eff6ff;
@@ -19,6 +60,8 @@
   
   --bg-app: #f8fafc;
   --bg-surface: #ffffff;
+  --bg-surface-alt: #f1f5f9;
+  --bg-surface-elevated: #ffffff;
   --bg-sidebar: #0f172a;
   --bg-sidebar-hover: #1e293b;
   --bg-sidebar-active: #334155;
@@ -29,20 +72,13 @@
   --text-white: #ffffff;
   
   --border-color: #e2e8f0;
+  --border-subtle: #cbd5e1;
   --border-focus: #3b82f6;
-  
-  --radius-sm: 6px;
-  --radius-md: 10px;
-  --radius-lg: 14px;
-  --radius-full: 9999px;
   
   --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
   --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
   --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
   --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-  
-  --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  --transition: all 0.2s ease-in-out;
 }
 
 * {
@@ -206,7 +242,7 @@ body {
   display: block;
   font-size: 0.825rem;
   font-weight: 600;
-  color: #334155;
+  color: var(--text-main);
   margin-bottom: 0.35rem;
 }
 
@@ -216,7 +252,7 @@ body {
   font-size: 0.9rem;
   border: 1px solid var(--border-color);
   border-radius: var(--radius-sm);
-  background-color: #fff;
+  background-color: var(--bg-surface-alt);
   color: var(--text-main);
   transition: var(--transition);
 }
@@ -487,7 +523,7 @@ body {
 }
 
 .header-icon-btn:hover {
-  background-color: #f1f5f9;
+  background-color: var(--bg-surface-alt);
   color: var(--text-main);
 }
 
@@ -495,8 +531,8 @@ body {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  background-color: #f1f5f9;
-  border: 1px solid transparent;
+  background-color: var(--bg-surface-alt);
+  border: 1px solid var(--border-color);
   border-radius: var(--radius-full);
   padding: 0.45rem 1rem;
   width: 100%;
@@ -505,9 +541,9 @@ body {
 }
 
 .header-search-bar:focus-within {
-  background-color: #fff;
+  background-color: var(--bg-surface-elevated);
   border-color: var(--border-focus);
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
 }
 
 .header-search-bar input {
@@ -704,8 +740,8 @@ body {
 }
 
 .data-table th {
-  background-color: #f8fafc;
-  color: #475569;
+  background-color: var(--bg-surface-alt);
+  color: var(--text-muted);
   font-weight: 600;
   padding: 0.8rem 1rem;
   border-bottom: 1px solid var(--border-color);
@@ -715,11 +751,11 @@ body {
 .data-table td {
   padding: 0.85rem 1rem;
   border-bottom: 1px solid var(--border-color);
-  color: #1e293b;
+  color: var(--text-main);
 }
 
 .data-table tbody tr:hover {
-  background-color: #f8fafc;
+  background-color: var(--bg-surface-alt);
 }
 
 .table-actions {
@@ -804,11 +840,39 @@ body {
 .timeline-dot.adj { background-color: var(--warning); }
 
 .timeline-content {
-  background: #f8fafc;
+  background: var(--bg-surface-alt);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-sm);
   padding: 0.65rem 0.85rem;
 }
+
+/* ALTERNADOR DE TEMA ESCURO / CLARO */
+.theme-toggle-btn {
+  color: var(--text-muted);
+  background: var(--bg-surface-alt);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-full);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  cursor: pointer;
+  transition: var(--transition);
+  flex-shrink: 0;
+}
+
+.theme-toggle-btn:hover {
+  color: var(--primary);
+  border-color: var(--border-focus);
+  background: var(--bg-surface-elevated);
+}
+
+.theme-toggle-btn .theme-icon-sun { display: block; color: #f59e0b; }
+.theme-toggle-btn .theme-icon-moon { display: none; }
+
+[data-theme="light"] .theme-toggle-btn .theme-icon-sun { display: none; }
+[data-theme="light"] .theme-toggle-btn .theme-icon-moon { display: block; color: #2563eb; }
 
 /* MODAIS */
 .modal-root {
@@ -824,13 +888,14 @@ body {
 .modal-backdrop {
   position: absolute;
   inset: 0;
-  background-color: rgba(15, 23, 42, 0.6);
-  backdrop-filter: blur(2px);
+  background-color: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(3px);
 }
 
 .modal-box {
   position: relative;
   background-color: var(--bg-surface);
+  border: 1px solid var(--border-color);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-xl);
   width: 100%;
@@ -869,11 +934,18 @@ body {
   font-size: 1.3rem;
   color: var(--text-muted);
   cursor: pointer;
+  padding: 0.25rem 0.5rem;
+  line-height: 1;
+}
+
+.modal-close-btn:hover {
+  color: var(--text-main);
 }
 
 .modal-body {
   padding: 1.5rem;
   overflow-y: auto;
+  color: var(--text-main);
 }
 
 .modal-footer {
@@ -883,8 +955,18 @@ body {
   align-items: center;
   justify-content: flex-end;
   gap: 0.75rem;
-  background-color: #f8fafc;
+  background-color: var(--bg-surface-alt);
   border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+}
+
+/* BACKDROP DA SIDEBAR MOBILE */
+.sidebar-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(2px);
+  z-index: 1050;
+  transition: opacity 0.25s ease;
 }
 
 /* TOASTS */
@@ -902,7 +984,9 @@ body {
 
 .toast-item {
   pointer-events: auto;
-  background: #fff;
+  background: var(--bg-surface);
+  color: var(--text-main);
+  border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-lg);
   padding: 0.85rem 1.1rem;
@@ -923,35 +1007,145 @@ body {
   to { transform: translateX(0); opacity: 1; }
 }
 
-/* RESPONSIVIDADE MOBILE E TABLET */
+/* RESPONSIVIDADE COMPLETA PARA SMARTPHONES E TABLETS */
 @media (max-width: 992px) {
   .sidebar {
     position: fixed;
-    left: -260px;
+    left: -280px;
+    width: 280px;
+    z-index: 1100;
+    transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
   .sidebar.open {
     left: 0;
+    box-shadow: 0 0 35px rgba(0, 0, 0, 0.8);
   }
   .sidebar-close-mobile {
-    display: block;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: var(--radius-sm);
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    border: none;
+    font-size: 1.1rem;
+    cursor: pointer;
   }
   .charts-grid {
     grid-template-columns: 1fr;
   }
 }
 
-@media (max-width: 640px) {
+@media (max-width: 768px) {
   .app-header {
-    padding: 0 1rem;
+    padding: 0 0.75rem;
+    height: 58px;
+    gap: 0.5rem;
   }
   .main-container {
-    padding: 1rem;
+    padding: 0.85rem 0.75rem;
+  }
+  .header-left {
+    gap: 0.4rem;
+  }
+  .header-search-bar {
+    max-width: 200px;
+    padding: 0.35rem 0.75rem;
+  }
+  .header-search-bar input {
+    font-size: 0.8rem;
   }
   .quick-actions span {
     display: none;
   }
+  .quick-actions .btn-sm {
+    padding: 0.45rem;
+    min-width: 38px;
+    min-height: 38px;
+  }
+  .kpi-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+  }
+  .kpi-card {
+    padding: 1rem 0.85rem;
+  }
+  .kpi-value {
+    font-size: 1.35rem;
+  }
+
+  /* Previne zoom excessivo no Safari iOS ao focar campos */
+  .form-input, .form-select, .form-textarea {
+    font-size: 16px !important;
+  }
+
+  /* Grids de formulário responsivos em coluna única */
+  .modal-box form [style*="grid-template-columns"] {
+    grid-template-columns: 1fr !important;
+    gap: 0.75rem !important;
+  }
+  .modal-box {
+    width: 96%;
+    max-height: 94vh;
+    border-radius: var(--radius-md);
+  }
+  .modal-body {
+    padding: 1rem;
+  }
+
+  /* Barra de filtros responsiva */
+  .filter-bar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+  }
+  .filter-group {
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+  }
+  .filter-group .form-input, 
+  .filter-group .form-select {
+    width: 100%;
+    min-width: 100%;
+  }
+
+  /* Botões e Paginação em telas móveis */
+  .view-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+  .view-actions {
+    width: 100%;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+  }
+  .pagination-wrapper {
+    flex-direction: column;
+    gap: 0.75rem;
+    align-items: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .header-search-bar {
+    display: none;
+  }
   .kpi-grid {
     grid-template-columns: 1fr;
+  }
+  .login-card {
+    padding: 1.5rem 1.25rem;
+    width: 95%;
+  }
+  .toast-root {
+    right: 0.75rem;
+    bottom: 0.75rem;
+    left: 0.75rem;
+    max-width: none;
   }
 }
 

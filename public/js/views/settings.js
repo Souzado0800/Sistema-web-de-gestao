@@ -3,7 +3,7 @@
  */
 import { api } from '../api.js';
 import { state } from '../state.js';
-import { showToast } from '../components.js';
+import { showToast, confirmDialog } from '../components.js';
 
 export async function renderSettings(container) {
   container.innerHTML = `
@@ -70,30 +70,48 @@ export async function renderSettings(container) {
               </label>
             </div>
           </div>
-          <div class="card-header" style="background:#f8fafc; border-top:1px solid var(--border-color); justify-content:flex-end;">
+          <div class="card-header" style="background:var(--bg-surface-alt); border-top:1px solid var(--border-color); justify-content:flex-end;">
             <button type="submit" class="btn btn-primary">Salvar Configurações</button>
           </div>
         </form>
       </div>
 
-      <!-- PAINEL DE BACKUP E SEGURANÇA -->
-      <div class="content-card">
-        <div class="card-header">
-          <h2 class="card-title">Backup & Segurança</h2>
+      <!-- PAINEL LATERAL: BACKUP E ZONA CRÍTICA -->
+      <div style="display:flex; flex-direction:column; gap:1.5rem;">
+        <!-- BACKUP -->
+        <div class="content-card">
+          <div class="card-header">
+            <h2 class="card-title">Backup de Dados</h2>
+          </div>
+          <div class="card-body">
+            <p style="font-size:0.825rem; color:var(--text-muted); margin-bottom:1rem;">
+              Exporte um snapshot completo com todos os produtos, categorias, fornecedores, departamentos e histórico de movimentações em formato JSON estruturado.
+            </p>
+
+            <button id="btn-download-backup" class="btn btn-outline btn-block">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+              <span>Baixar Backup Completo (JSON)</span>
+            </button>
+          </div>
         </div>
-        <div class="card-body">
-          <p style="font-size:0.825rem; color:#475569; margin-bottom:1rem;">
-            Exporte um snapshot completo com todos os produtos, categorias, fornecedores, departamentos e histórico de movimentações em formato JSON estruturado.
-          </p>
 
-          <button id="btn-download-backup" class="btn btn-outline btn-block">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-            <span>Baixar Backup Completo (JSON)</span>
-          </button>
+        <!-- ZONA CRÍTICA: LIMPEZA GERAL DO BANCO -->
+        <div class="content-card" style="border: 1px solid rgba(239, 68, 68, 0.4);">
+          <div class="card-header" style="background: rgba(239, 68, 68, 0.08);">
+            <h2 class="card-title text-danger" style="display:flex; align-items:center; gap:0.5rem; font-size:1rem;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+              Limpeza Geral do Banco
+            </h2>
+          </div>
+          <div class="card-body">
+            <p style="font-size:0.825rem; color:var(--text-muted); margin-bottom:1rem;">
+              Apaga com segurança todos os produtos, movimentações, compras e cadastros de teste, deixando as tabelas <strong>limpas e zeradas</strong> para entrada em produção. Usuários e configurações são preservados.
+            </p>
 
-          <div style="margin-top:1.5rem; padding-top:1rem; border-top:1px solid var(--border-color); font-size:0.775rem; color:var(--text-muted);">
-            <strong style="color:var(--text-main); display:block; margin-bottom:0.25rem;">Ambiente Serverless & PostgreSQL:</strong>
-            No PostgreSQL gerenciado (Neon / Supabase), backups diários e point-in-time recovery (PITR) são executados automaticamente pelo provedor de banco de dados.
+            <button id="btn-clean-database" class="btn btn-danger btn-block">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+              <span>Zerar Dados e Limpar Banco</span>
+            </button>
           </div>
         </div>
       </div>
@@ -139,6 +157,26 @@ export async function renderSettings(container) {
       showToast(err.message, 'error');
     }
   });
+
+  const cleanDbBtn = document.getElementById('btn-clean-database');
+  if (cleanDbBtn) {
+    cleanDbBtn.addEventListener('click', () => {
+      confirmDialog({
+        title: 'Limpar Todos os Dados do Estoque?',
+        message: 'Atenção: Esta ação apagará permanentemente todos os produtos, movimentações, compras e inventários de teste, deixando o banco 100% limpo para operação real. Usuários e configurações são mantidos. Deseja continuar?',
+        confirmText: 'Sim, Limpar Todo o Banco',
+        onConfirm: async () => {
+          try {
+            const res = await api.post('/settings/clean-database');
+            showToast(res.message || 'Banco de dados limpo com sucesso!', 'success');
+            setTimeout(() => window.location.reload(), 1200);
+          } catch (err) {
+            showToast(err.message, 'error');
+          }
+        }
+      });
+    });
+  }
 }
 
 async function loadSettingsForm() {

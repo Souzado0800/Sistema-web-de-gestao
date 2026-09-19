@@ -9,6 +9,32 @@ const stockService = require('../backend/services/stock_service');
 async function runPurchaseTests() {
   console.log('--- [TESTE 5] Iniciando Testes de Reposição e Ordens de Compra ---');
 
+  // Garante que os produtos dos casos 2 e 3 estejam presentes
+  let existingTinta = await productRepo.findBySku('TNT-EPS-BK');
+  if (!existingTinta) {
+    await productRepo.create({
+      sku: 'TNT-EPS-BK',
+      name: 'Refil de Tinta Epson T544 Preto',
+      unit_measure: 'Frasco',
+      current_stock: 2,
+      min_stock: 2,
+      ideal_stock: 8,
+      reference_price: 65.00
+    });
+  }
+  let existingCaneta = await productRepo.findBySku('CAN-BIC-AZ');
+  if (!existingCaneta) {
+    await productRepo.create({
+      sku: 'CAN-BIC-AZ',
+      name: 'Caneta Esferográfica Azul 1.0mm',
+      unit_measure: 'Unidade',
+      current_stock: 150,
+      min_stock: 30,
+      ideal_stock: 100,
+      reference_price: 2.20
+    });
+  }
+
   // 1. Validação dos Casos Práticos do Prompt:
   // Caso 2: Tinta Epson Preto (Estoque: 2, Mín: 2, Ideal: 8) -> DEVE GERAR ALERTA DE REPOSIÇÃO
   // Caso 3: Caneta Azul (Estoque: 150, Mín: 30, Ideal: 100) -> NÃO DEVE GERAR ALERTA

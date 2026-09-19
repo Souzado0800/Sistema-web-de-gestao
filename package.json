@@ -8,6 +8,7 @@
     "test": "node tests/run_tests.js",
     "migrate": "node database/migrate.js",
     "seed": "node database/seed.js",
+    "clean-db": "node database/clean.js",
     "build": "node -e \"console.log('Build completo: SPA estático pronto em public/ e Functions em netlify/functions/')\""
   },
   "keywords": [

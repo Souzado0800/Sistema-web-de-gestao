@@ -7,11 +7,23 @@
   <meta name="description" content="Sistema Profissional de Gestão e Controle de Estoque Interno para Empresas">
   <link rel="stylesheet" href="/css/app.css">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%232563eb'><path d='M4 3h16a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1zm1 2v14h14V5H5zm3 3h8v2H8V8zm0 4h8v2H8v-2z'/></svg>">
+  <script>
+    (function() {
+      const theme = localStorage.getItem('app_theme') || 'dark';
+      document.documentElement.setAttribute('data-theme', theme);
+    })();
+  </script>
 </head>
 <body>
   <!-- TELA DE LOGIN (Exibida quando não autenticado) -->
   <div id="login-container" class="login-wrapper hidden">
     <div class="login-card">
+      <div style="display: flex; justify-content: flex-end; margin-bottom: 0.25rem;">
+        <button id="btn-login-theme-toggle" class="header-icon-btn theme-toggle-btn" title="Alternar Modo Escuro / Claro" type="button">
+          <svg class="theme-icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+          <svg class="theme-icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+        </button>
+      </div>
       <div class="login-header">
         <div class="login-logo-icon">
           <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -49,6 +61,9 @@
 
   <!-- APLICAÇÃO PRINCIPAL (Exibida após login) -->
   <div id="app-layout" class="app-layout hidden">
+    <!-- BACKDROP DA SIDEBAR MOBILE -->
+    <div id="sidebar-backdrop" class="sidebar-backdrop hidden"></div>
+
     <!-- SIDEBAR -->
     <aside id="app-sidebar" class="sidebar">
       <div class="sidebar-header">
@@ -167,6 +182,12 @@
               <span>Ajustar</span>
             </button>
           </div>
+
+          <!-- Alternador de Tema Escuro / Claro -->
+          <button id="btn-theme-toggle" class="header-icon-btn theme-toggle-btn" title="Alternar Modo Escuro / Claro">
+            <svg class="theme-icon-sun" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+            <svg class="theme-icon-moon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+          </button>
 
           <!-- Sino de Alertas -->
           <button id="btn-alert-bell" class="header-icon-btn alert-bell" title="Alertas de Reposição">

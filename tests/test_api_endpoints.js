@@ -57,21 +57,60 @@ async function runApiIntegrationTests() {
   console.log(' ✔ [API] GET /api/dashboard/charts retornou dados de linha temporal e ranking');
 
   // 4. Listagem de Produtos
-  const prodsRes = await callApi('GET', '/products', null, authHeaders);
+  let prodsRes = await callApi('GET', '/products', null, authHeaders);
   assert.strictEqual(prodsRes.status, 200);
-  assert.ok(prodsRes.data.data.length >= 5);
+
+  // Garante a existência dos produtos dos casos de teste
+  let caneta = prodsRes.data.data.find(p => p.sku === 'CAN-BIC-AZ');
+  if (!caneta) {
+    const created = await callApi('POST', '/products', {
+      sku: 'CAN-BIC-AZ',
+      name: 'Caneta Esferográfica Azul 1.0mm',
+      unit_measure: 'Unidade',
+      current_stock: 150,
+      min_stock: 30,
+      ideal_stock: 100,
+      reference_price: 2.20
+    }, authHeaders);
+    caneta = created.data.product;
+  }
+  let papel = prodsRes.data.data.find(p => p.sku === 'PAP-A4-75G');
+  if (!papel) {
+    await callApi('POST', '/products', {
+      sku: 'PAP-A4-75G',
+      name: 'Papel Sulfite A4 75g',
+      unit_measure: 'Resma',
+      current_stock: 10,
+      min_stock: 3,
+      ideal_stock: 20,
+      reference_price: 28.50
+    }, authHeaders);
+  }
+  prodsRes = await callApi('GET', '/products', null, authHeaders);
   console.log(` ✔ [API] GET /api/products retornou ${prodsRes.data.data.length} produtos`);
 
   // 5. Validação do Caso 4 do Prompt:
   // Saída de 20 canetas da Caneta Azul (Estoque inicial: 150 -> Novo saldo: 130)
-  const caneta = prodsRes.data.data.find(p => p.sku === 'CAN-BIC-AZ');
   assert.ok(caneta, 'Caneta Azul deve existir no catálogo');
   const initialStock = parseFloat(caneta.current_stock);
+
+  let deptRes = await callApi('GET', '/departments', null, authHeaders);
+  let deptId = null;
+  if (deptRes.data.departments && deptRes.data.departments.length > 0) {
+    deptId = deptRes.data.departments[0].id;
+  } else {
+    const createdDept = await callApi('POST', '/departments', {
+      name: 'Administrativo',
+      description: 'Setor Administrativo',
+      cost_center: 'ADM-01'
+    }, authHeaders);
+    deptId = createdDept.data.department.id;
+  }
 
   const exitRes = await callApi('POST', '/movements/exit', {
     product_id: caneta.id,
     quantity: 20,
-    department_id: 1, // Administrativo
+    department_id: deptId,
     responsible_person: 'João Funcionário',
     reason: 'Uso interno',
     notes: 'Impressão e despacho de documentos'
@@ -99,10 +138,10 @@ async function runApiIntegrationTests() {
   assert.ok(Array.isArray(catRes.data.categories), 'Deve retornar array de categorias');
   console.log(` ✔ [API] GET /api/categories retornou ${catRes.data.categories.length} categorias`);
 
-  const deptRes = await callApi('GET', '/departments', null, authHeaders);
-  assert.strictEqual(deptRes.status, 200, 'GET /departments deve retornar 200 OK');
-  assert.ok(Array.isArray(deptRes.data.departments), 'Deve retornar array de departamentos');
-  console.log(` ✔ [API] GET /api/departments retornou ${deptRes.data.departments.length} departamentos`);
+  const deptListRes = await callApi('GET', '/departments', null, authHeaders);
+  assert.strictEqual(deptListRes.status, 200, 'GET /departments deve retornar 200 OK');
+  assert.ok(Array.isArray(deptListRes.data.departments), 'Deve retornar array de departamentos');
+  console.log(` ✔ [API] GET /api/departments retornou ${deptListRes.data.departments.length} departamentos`);
 
   // 8. Auditoria
   const auditRes = await callApi('GET', '/audit', null, authHeaders);
