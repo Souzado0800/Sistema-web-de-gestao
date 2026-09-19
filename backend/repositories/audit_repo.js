@@ -9,6 +9,7 @@ async function logAction({ user_id = null, username = null, action, entity_type,
     VALUES ($1, $2, $3, $4, $5, $6, $7)
     RETURNING *
   `;
+  const safeIp = ip_address ? String(ip_address).split(',')[0].trim().slice(0, 100) : null;
   const values = [
     user_id,
     username,
@@ -16,7 +17,7 @@ async function logAction({ user_id = null, username = null, action, entity_type,
     entity_type,
     entity_id ? String(entity_id) : null,
     typeof details === 'object' ? JSON.stringify(details) : String(details),
-    ip_address
+    safeIp
   ];
   const executor = client || db;
   const res = await executor.query(sql, values);

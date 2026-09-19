@@ -98,7 +98,7 @@ CREATE TABLE IF NOT EXISTS audit_logs (
     entity_type VARCHAR(50) NOT NULL,
     entity_id VARCHAR(50),
     details TEXT,
-    ip_address VARCHAR(45),
+    ip_address VARCHAR(150),
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 

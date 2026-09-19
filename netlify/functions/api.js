@@ -73,7 +73,8 @@ exports.handler = async function (event, context) {
     }
   }
 
-  const clientIp = event.headers['client-ip'] || event.headers['x-forwarded-for'] || '127.0.0.1';
+  const rawIp = event.headers['client-ip'] || event.headers['x-forwarded-for'] || event.headers['x-client-ip'] || '127.0.0.1';
+  const clientIp = (String(rawIp).split(',')[0] || '127.0.0.1').trim().slice(0, 100);
 
   try {
     // =========================================================================
