@@ -1,0 +1,31 @@
+{
+  "name": "gestao-estoque",
+  "version": "1.0.0",
+  "description": "Sistema Completo de Gestão e Controle de Estoque Empresarial para Netlify",
+  "main": "netlify/functions/api.js",
+  "scripts": {
+    "dev": "node dev-server.js",
+    "test": "node tests/run_tests.js",
+    "migrate": "node database/migrate.js",
+    "seed": "node database/seed.js",
+    "build": "node -e \"console.log('Build completo: SPA estático pronto em public/ e Functions em netlify/functions/')\""
+  },
+  "keywords": [
+    "estoque",
+    "gestao-de-estoque",
+    "netlify",
+    "serverless",
+    "postgresql",
+    "inventory"
+  ],
+  "author": "Antigravity",
+  "license": "MIT",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "jsonwebtoken": "^9.0.2",
+    "pg": "^8.13.1"
+  },
+  "devDependencies": {
+    "pg-mem": "^3.0.14"
+  }
+}
