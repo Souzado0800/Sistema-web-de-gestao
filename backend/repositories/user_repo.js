@@ -3,8 +3,12 @@
  */
 const db = require('../db');
 
-async function findByUsername(username) {
-  const res = await db.query(`SELECT * FROM users WHERE LOWER(username) = LOWER($1)`, [username.trim()]);
+async function findByUsername(usernameOrEmail) {
+  const clean = usernameOrEmail.trim();
+  const res = await db.query(
+    `SELECT * FROM users WHERE LOWER(username) = LOWER($1) OR LOWER(email) = LOWER($1)`,
+    [clean]
+  );
   return res.rows[0] || null;
 }
 
